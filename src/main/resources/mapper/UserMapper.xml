@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.fa.dao.IUserDao">
+    <sql id="BASE_TABLE">
+        t_users
+    </sql>
+    <sql id="BASE_COLUMN">
+        uid,password,username,realname,email
+    </sql>
+    <select id="login" resultType="User">
+        SELECT
+        <include refid="BASE_COLUMN"/>
+        FROM
+        <include refid="BASE_TABLE"/>
+        <where>
+            <if test="username != null"></if>
+            AND username = #{username,jdbcType=VARCHAR}
+            <if test="password != null"></if>
+            AND password = #{password,jdbcType=VARCHAR}
+        </where>
+    </select>
+    <update id="update">
+        UPDATE
+        <include refid="BASE_TABLE"/>
+        SET
+        email = #{user.email},realname = #{user.realname}
+        WHERE uid=#{user.uid}
+    </update>
+    <update id="updatePwd">
+        UPDATE
+        <include refid="BASE_TABLE"/>
+        SET
+        password = #{new}
+        WHERE uid=#{uid}
+    </update>
+</mapper>

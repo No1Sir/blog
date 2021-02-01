@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.fa.dao.ILabelDao">
+    <sql id="BASE_TABLE">
+        t_labels
+    </sql>
+    <sql id="BASE_COLUMN">
+        mid,name,type,parent
+    </sql>
+
+    <select id="findCategoryByName" resultType="Integer">
+        SELECT lid FROM `t_labels` where name 
+        in
+        (
+        <foreach collection="categories" item="c" separator=",">
+            #{c}
+        </foreach>
+        );
+    </select>
+    <select id="findAllInRequest" resultType="String">
+        select name from t_labels l,t_relationships r
+        where l.lid = r.lid and cid = #{cid}
+        and name in
+        (
+        <foreach collection="metas.keys" item="c" separator=",">
+            #{c}
+        </foreach>
+        );
+    </select>
+    <select id="findAllNotInRequest" resultType="Integer">
+        SELECT lid FROM `t_labels` where name
+        in
+        (
+        <foreach collection="metas.keys" item="c" separator=",">
+            #{c}
+        </foreach>
+        );
+    </select>
+    <select id="findAllByNames" resultType="Integer">
+        SELECT lid FROM `t_labels` where name
+        in
+        (
+        <foreach collection="names" item="c" separator=",">
+            #{c}
+        </foreach>
+        );
+    </select>
+</mapper>

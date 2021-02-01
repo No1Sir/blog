@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.fa.dao.IArticleDao">
+    <sql id="BASE_TABLE">
+        t_contents
+    </sql>
+    <sql id="BASE_COLUMN">
+        cid,created,modified,title,content,status,tags,categories,commentsNum,allowComment;
+    </sql>
+    <select id="findLately" resultType="Articles">
+        select cid,created,title,status,type,categories,commentsNum from t_contents
+        order by created desc
+        limit 0,5
+    </select>
+    <!--条件查询文章-->
+    <select id="findAll" resultType="Articles">
+        select cid,created,title,status,type,categories from t_contents
+    </select>
+    <!--按类别查询文章 博客首页展示-->
+    <select id="findAllByType" resultType="Articles">
+        select cid,created,title,content from t_contents
+        <where>
+            <if test="type!=null and type!=''">
+                type = #{type}
+            </if>
+        </where>
+    </select>
+    <select id="findArticleById"  resultType="Articles">
+        select * from t_contents where cid = #{cid}
+    </select>
+    <delete id="deleteArticleById">
+        delete from t_contents where cid = #{cid}
+    </delete>
+    <insert id="addArticles" useGeneratedKeys="true" keyColumn="cid" keyProperty="cid">
+        insert into t_contents(created,title,type,content,tags,categories,status,allowComment)
+        values(UNIX_TIMESTAMP(NOW()),#{title},#{type},#{content},#{tags},#{categories},#{status},#{allowComment})
+    </insert>
+    <update id="updateArticle">
+        update t_contents set modified = UNIX_TIMESTAMP(NOW()),
+        title = #{title},type = #{type},content = #{content},tags = #{tags},categories = #{categories},
+        status = #{status},allowComment = #{allowComment}
+        where cid = #{cid}
+    </update>
+</mapper>

@@ -1,0 +1,52 @@
+server:
+  port: 8080
+spring:
+  thymeleaf:
+    cache: false
+  servlet:
+    multipart:
+      max-file-size: 10Mb
+      max-request-size: 100Mb
+  datasource:
+    url: jdbc:mysql://localhost:3306/j?userUnicode=true&&characterEncoding=utf-8&userSSL=false
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: root
+    druid:
+      pool-prepared-statements: false
+      max-pool-prepared-statement-per-connection-size: 20
+  #i18n
+  messages:
+    basename: i18n.login
+  #Redis
+  redis:
+    host: localhost
+    database: 1
+#pagehelper
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+  returnPageInfo: check
+mybatis:
+  mapper-locations: classpath:mapper\*.xml
+  type-aliases-package: com.it.fa.model
+#mybatis-plus:
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    关闭驼峰命名 不进行 property->column(userName-->user_name)转换
+#
+logging:
+  level:
+    com.it.fa.dao.IRelationDao.ILabelService: debug
+qiniu:
+  #密钥
+  accessKey: rkz82vgEvULh_bj41FcmLdscHtUJ199ktuUL75IH
+  secretKey: RsghcPyRNCMi3hld_SUSInqYwMtpXQgqAMCjfFYm
+  #空间
+  bucket: "upupupup2"
+  #外链访问
+  cdn:
+    url: "qnkwypr0o.hd-bkt.clouddn.com"
