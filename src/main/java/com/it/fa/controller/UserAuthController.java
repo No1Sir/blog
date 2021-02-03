@@ -8,12 +8,14 @@ import com.it.fa.service.comment.ICommentService;
 import com.it.fa.service.log.ILogService;
 import com.it.fa.service.user.IUserService;
 import com.it.fa.utils.APIResponse;
+import com.it.fa.utils.JwtUtil;
 import com.it.fa.utils.LoginOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -57,6 +59,8 @@ public class UserAuthController {
                     LoginOperation.setCookie(response,username,password);
                 }
             }
+//            String token = JwtUtil.generateToken(userInfo);
+//            response.addCookie(new Cookie("token",token));
             request.getSession().setAttribute("userInfo",userInfo);
             ILogService.addLog(LogActions.LOGIN.getAction(),request.getRemoteAddr());
         }catch (Exception e){

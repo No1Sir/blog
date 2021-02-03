@@ -33,7 +33,7 @@ public class HomeController {
      * 登陆成功跳转首页
      * @return
      */
-    @RequestMapping(value = {"","/index"})
+    @RequestMapping(value = {"/","/index"})
     public String toMyBolg(HttpServletRequest request,
             @RequestParam(name = "page",defaultValue = "1",required = false)Integer page,
             @RequestParam(name = "limit",defaultValue = "3",required = false)Integer limit,

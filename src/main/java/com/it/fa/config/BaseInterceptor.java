@@ -1,14 +1,17 @@
 package com.it.fa.config;
 
 import com.it.fa.model.Info;
+import com.it.fa.model.User;
 import com.it.fa.service.article.IArticleService;
 import com.it.fa.utils.AdminCommons;
 import com.it.fa.utils.Common;
+import com.it.fa.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,15 +26,8 @@ public class BaseInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String uri = request.getRequestURI();
-        Object userInfo = request.getSession().getAttribute("userInfo");
-        //不拦截静态资源 和 登录操作  如果已经登陆就放行
-        if (
-                uri.startsWith("/admin") && null==userInfo && !uri.startsWith("/admin/login")
-                && !uri.startsWith("/admin/logout")
-                && !uri.startsWith("/admin/css") && !uri.startsWith("/admin/images")
-                && !uri.startsWith("/admin/js") && !uri.startsWith("/admin/plugins")
-                && !uri.startsWith("/admin/editormd")
-                ) {
+        User userInfo = (User) request.getSession().getAttribute("userInfo");
+        if (null==userInfo && !uri.equals("/") && !uri.equals("/index") && !uri.equals("/admin/login")) {
             response.sendRedirect(request.getContextPath() + "/admin/login");
             return false;
         }
