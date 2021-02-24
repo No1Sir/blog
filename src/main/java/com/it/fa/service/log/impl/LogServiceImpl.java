@@ -18,7 +18,6 @@ public class LogServiceImpl implements ILogService {
     public void addLog(String action, String remoteAddr) {
         logDao.addLog(action,remoteAddr);
     }
-    @Cacheable(value="logCache",key = "'logs_' + #p0")
     @Override
     public List<Log> findAll() {
         return logDao.findAll();

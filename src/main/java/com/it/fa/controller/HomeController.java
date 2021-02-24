@@ -45,14 +45,18 @@ public class HomeController {
     /**
      * 文章内容展示
      */
-    @GetMapping("blog/article/{cid}")
+    @GetMapping("/blog/article/{cid}")
     public String getContents(@PathVariable(name = "cid")Integer cid, HttpServletRequest request){
         Articles article = articleService.findArticleById(cid);
         List<Comment> comments = commentService.findAllByCid(cid);
-        //每点击一次就自增 数据放在redis中
-        stringRedisTemplate.opsForValue().increment("comment_"+cid,1);
-        //获取点击量
-        String reads = stringRedisTemplate.opsForValue().get("comment_"+cid);
+        /**
+         * redis当作二级缓存
+         * //每点击一次就自增 数据放在redis中
+         *   stringRedisTemplate.opsForValue().increment("comment_"+cid,1);
+         * //获取点击量
+         *   String reads = stringRedisTemplate.opsForValue().get("comment_"+cid);
+         */
+        String reads = articleService.getReads(cid);
         article.setReads(reads);
         request.setAttribute("article",article);
         request.setAttribute("commentList",comments);

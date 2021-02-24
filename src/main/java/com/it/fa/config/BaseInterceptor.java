@@ -27,7 +27,10 @@ public class BaseInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String uri = request.getRequestURI();
         User userInfo = (User) request.getSession().getAttribute("userInfo");
-        if (null==userInfo && !uri.equals("/") && !uri.equals("/index") && !uri.equals("/admin/login")) {
+        if (null==userInfo && !uri.equals("/") && !uri.equals("/index") && !uri.equals("/admin/login")
+                && !uri.startsWith("/blog")
+                && !uri.equals("/about/index")&& !uri.equals("/about"))
+        {
             response.sendRedirect(request.getContextPath() + "/admin/login");
             return false;
         }

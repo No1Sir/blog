@@ -4,10 +4,13 @@ import com.it.fa.model.Articles;
 import com.it.fa.model.Info;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
 
 import java.util.List;
 
 public interface IArticleDao {
+
     List<Articles> findAll();
 
     List<Articles> findAllByType(@Param("type") String type);
@@ -28,4 +31,6 @@ public interface IArticleDao {
             "  (select count(*) content_count from t_contents where status = 'publish')c"+
             ")")
     Info findArticleBaseInfo();
+    @Select("select t_contents.reads from t_contents where cid = #{cid}")
+    String findReads(Integer cid);
 }

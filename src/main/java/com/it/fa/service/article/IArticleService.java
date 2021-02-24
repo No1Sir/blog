@@ -24,4 +24,6 @@ public interface IArticleService {
     int updateArticle(Articles articles);
 
     Info findArticleBaseInfo();
+
+    String getReads(Integer cid);
 }

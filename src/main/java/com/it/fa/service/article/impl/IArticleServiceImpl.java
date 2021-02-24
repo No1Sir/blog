@@ -1,17 +1,18 @@
 package com.it.fa.service.article.impl;
 
-//import com.github.pagehelper.PageHelper;
-//import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.it.fa.dao.IArticleDao;
 import com.it.fa.model.Articles;
 import com.it.fa.model.Info;
-import com.it.fa.model.Label;
 import com.it.fa.service.article.IArticleService;
 import com.it.fa.service.label.ILabelService;
 import com.it.fa.service.relation.IRelationService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -25,7 +26,11 @@ public class IArticleServiceImpl implements IArticleService {
     private IRelationService relationService;
     @Resource
     private ILabelService labelService;
+    //根据名称注入
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
     @Override
+    @CachePut(value = "articles",key = "'allArticles'")
     public PageInfo<Articles> findAll(int page, int limit) {
         PageHelper.startPage(page,limit);
         List<Articles> articles = articleDao.findAll();
@@ -42,7 +47,7 @@ public class IArticleServiceImpl implements IArticleService {
     public int deleteArticleById(Integer cid) {
         return articleDao.deleteArticleById(cid);
     }
-
+    @CacheEvict(value = "articles",key = "'latelyArticles'",allEntries = true,beforeInvocation = true)
     @Override
     public List<Articles> findLately() {
         return articleDao.findLately();
@@ -137,7 +142,23 @@ public class IArticleServiceImpl implements IArticleService {
     }
 
     @Override
+    @Cacheable(value = "articles",key = "'baseInfo'")
     public Info findArticleBaseInfo() {
         return articleDao.findArticleBaseInfo();
+    }
+    @Override
+    public String getReads(Integer cid) {
+        //查redis
+        String r2 = stringRedisTemplate.opsForValue().get("comment_" + cid);
+        if(null!=r2){
+            System.out.println("redis中的数据");
+            Long reads = stringRedisTemplate.opsForValue().increment("comment_"+cid, 1);
+            return reads.toString();
+        }
+        //查数据库
+        String reads = articleDao.findReads(cid);
+        int k = Integer.valueOf(reads)+1;
+        stringRedisTemplate.opsForValue().set("comment_"+cid,String.valueOf(k));
+        return reads;
     }
 }
